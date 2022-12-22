@@ -35,7 +35,8 @@ jobs:
       - name: Build
         run: |
           npm install
-          npm run build --base=/${{ github.event.repository.name }}
+          npm run type-check
+          npm run build-only -- --base=/${{ github.event.repository.name }}
       - name: Setup Pages
         uses: actions/configure-pages@v2
       - name: Upload artifact
