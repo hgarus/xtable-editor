@@ -2,9 +2,8 @@
 import * as _ from "lodash";
 import { Table } from "./Domain";
 
-const props = defineProps<{
+defineProps<{
   table: Table;
-  gesamtwertung: number[];
 }>();
 
 function gesamtwertung(rank: number) {
@@ -35,7 +34,7 @@ function toClipboard(element: HTMLElement) {
 
 <template>
   <div>
-    <button @click="toClipboard($refs.table)">
+    <button @click="toClipboard($refs.table as HTMLTableElement)">
       <font-awesome-icon icon="fa-regular fa-copy" />
     </button>
     <table ref="table">
@@ -49,7 +48,10 @@ function toClipboard(element: HTMLElement) {
         <th>Summe</th>
         <th>Punkte Gesamtwertung</th>
       </tr>
-      <tr v-for="(player, index) in table.playersByRank()">
+      <tr
+        v-for="(player, index) in table.playersByRank()"
+        v-bind:key="player.name"
+      >
         <td>{{ index + 1 }}.</td>
         <td>{{ player.name }}</td>
         <td v-for="opp in table.playersByRank()" v-bind:key="opp.name">

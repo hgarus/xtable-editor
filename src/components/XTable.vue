@@ -1,8 +1,7 @@
 <script setup lang="ts">
-import TableEditor from './TableEditor.vue';
-import TableDisplay from './TableDisplay.vue';
-import TablePrefs from './TablePrefs.vue'
-import {Table} from './Domain';
+import TableEditor from "./TableEditor.vue";
+import TableDisplay from "./TableDisplay.vue";
+import { Table } from "./Domain";
 import { ref } from "vue";
 
 const table = ref(new Table());

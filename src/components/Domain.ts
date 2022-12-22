@@ -1,7 +1,7 @@
 import * as _ from "lodash";
 
 export class Table {
-  private players = new Map<string, Player>();
+  players = new Map<string, Player>();
   playerByName(name: string): Player | undefined {
     return this.players.get(name);
   }

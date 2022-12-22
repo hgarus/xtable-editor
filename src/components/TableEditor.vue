@@ -3,19 +3,19 @@ import * as _ from "lodash";
 import { Table } from "./Domain";
 import ResultInput from "./ResultInput.vue";
 
-const props = defineProps({
-  table: { type: Table, required: true },
-});
+const props = defineProps<{
+  table: Table;
+}>();
 
 function newPlayer(event: Event) {
   const target = event.target as HTMLInputElement;
   props.table.addPlayer(target.value);
   target.value = "";
 }
-function focusByTabindex($el: any, tabindex?: number) {
+function focusByTabindex($el: HTMLElement, tabindex?: number) {
   if (tabindex) {
     _.find(
-      Array.from($el.querySelectorAll("[tabindex]")),
+      Array.from($el.querySelectorAll("[tabindex]")) as HTMLElement[],
       (el) => el.tabIndex >= tabindex
     )?.focus();
   }
@@ -48,7 +48,7 @@ function focusByTabindex($el: any, tabindex?: number) {
             :tabindex="
               index < oppIndex
                 ? index * table.playersByEntry().length + oppIndex
-                : null
+                : undefined
             "
             :model-value="player.resultByOpp(opp)"
             @update:model-value="(newValue) => player.setResult(opp, newValue)"
