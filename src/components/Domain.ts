@@ -1,5 +1,4 @@
 import * as _ from "lodash";
-import { result } from "lodash";
 
 export class Table {
   players = new Map<string, Player>();
@@ -29,7 +28,12 @@ export class Table {
     return this.players.get(name);
   }
   playersByRank(): Player[] {
-    return _.sortBy(Array.from(this.players.values()), (p) => -p.points());
+    const players = Array.from(this.players.values());
+    return _.orderBy(
+      players,
+      [(p) => p.points(), (p) => p.sonnebornBerger()],
+      ["desc", "desc"]
+    );
   }
   playersByEntry(): Player[] {
     return Array.from(this.players.values());
