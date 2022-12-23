@@ -14,3 +14,31 @@
     margin: 3em 0;
   }
 }
+
+table {
+  border-collapse: collapse;
+}
+table th {
+  font-weight: bold;
+}
+table td:first-child {
+  padding-left: 0.5em;
+}
+table td:last-child {
+  padding-right: 0.5em;
+}
+table th {
+  padding: 0.5em 0.25em;
+}
+table td {
+  padding: 0.25em 0.25em;
+}
+table tr:first-child {
+  background-color: darkgray;
+}
+table tr:nth-child(2n + 2) {
+  background-color: lightgray;
+}
+dialog {
+  margin: 20vh auto 0 auto;
+}

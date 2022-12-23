@@ -1,19 +1,16 @@
 <script setup lang="ts">
-import { Result } from './Domain';
-
 defineProps<{
-  prefs: {gesamtwertung: number[]};
+  prefs: { gesamtwertung: number[] };
 }>();
 defineEmits(["update:modelValue", "focusOn"]);
 </script>
 
 <template>
-   <dialog>
+  <dialog>
     <form>
-        <label>
-        </label>
+      <label> </label>
     </form>
-   </dialog>
+  </dialog>
 </template>
 
 <style scoped>

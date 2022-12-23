@@ -1,30 +1,44 @@
 <script setup lang="ts">
+import { ref } from "vue";
 import * as _ from "lodash";
 import { Table } from "./Domain";
 import ResultInput from "./ResultInput.vue";
+import ImportDialog from "./ImportDialog.vue";
 
 const props = defineProps<{
   table: Table;
 }>();
-
+const importDialog = ref<InstanceType<typeof ImportDialog>>();
+const tableElement = ref<HTMLTableElement | null>();
 function newPlayer(event: Event) {
   const target = event.target as HTMLInputElement;
   props.table.addPlayer(target.value);
   target.value = "";
 }
-function focusByTabindex($el: HTMLElement, tabindex?: number) {
+function focusByTabindex(tabindex?: number) {
   if (tabindex) {
     _.find(
-      Array.from($el.querySelectorAll("[tabindex]")) as HTMLElement[],
+      Array.from(
+        tableElement.value?.querySelectorAll("[tabindex]") ?? []
+      ) as HTMLElement[],
       (el) => el.tabIndex >= tabindex
     )?.focus();
   }
 }
+function importTable(table: Table) {
+  props.table.replaceWith(table);
+}
 </script>
 
 <template>
+  <ImportDialog ref="importDialog" @table-import="importTable"></ImportDialog>
   <div class="editor">
-    <table>
+    <header>
+      <button @click="importDialog?.show()">
+        <font-awesome-icon icon="fa-regular fa-folder-open" />
+      </button>
+    </header>
+    <table ref="tableElement">
       <tr>
         <th>#</th>
         <th>Name</th>
@@ -52,11 +66,11 @@ function focusByTabindex($el: HTMLElement, tabindex?: number) {
             "
             :model-value="player.resultByOpp(opp)"
             @update:model-value="(newValue) => player.setResult(opp, newValue)"
-            @focusOn="(tabindex) => focusByTabindex($el, tabindex)"
+            @focusOn="(tabindex) => focusByTabindex(tabindex)"
           >
           </ResultInput>
         </td>
-        <td>{{ player.points() }}</td>
+        <td class="align-right">{{ player.points() }}</td>
       </tr>
       <tr>
         <td></td>
@@ -69,5 +83,19 @@ function focusByTabindex($el: HTMLElement, tabindex?: number) {
 <style scoped>
 .editor {
   border: 1px solid black;
+  padding: 1em;
+  margin: 0 2em;
+}
+input[type="text"] {
+  width: 150px;
+}
+.align-right {
+  text-align: right;
+}
+header {
+  margin-bottom: 1em;
+}
+header button {
+  padding: 0.75em;
 }
 </style>

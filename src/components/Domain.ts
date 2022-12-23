@@ -1,7 +1,30 @@
 import * as _ from "lodash";
+import { result } from "lodash";
 
 export class Table {
   players = new Map<string, Player>();
+  static fromTableElement(tableElement: HTMLTableElement) {
+    const table = new Table();
+    const names = Array.from(
+      tableElement.querySelectorAll("tr:not(:first-of-type) td:nth-of-type(2)")
+    ).map((element, i) => element.textContent || "" + i);
+    names.forEach((name) => table.addPlayer(name));
+    names.forEach((name, i) => {
+      const player = table.playerByName(name);
+      const relevantResultElements = Array.from(
+        tableElement.querySelectorAll(
+          `tr:nth-of-type(${i + 2}) td:nth-of-type(n + 3)`
+        )
+      ).slice(i + 1, names.length);
+      relevantResultElements
+        .map((element) => element.textContent as Result)
+        .forEach((result, j) => {
+          const opp = table.playerByName(names[i + 1 + j])!;
+          player?.setResult(opp, result);
+        });
+    });
+    return table;
+  }
   playerByName(name: string): Player | undefined {
     return this.players.get(name);
   }
@@ -23,6 +46,15 @@ export class Table {
   onPlayerNameChange(oldName: string, newName: string, player: Player) {
     this.players.delete(oldName);
     this.players.set(newName, player);
+  }
+  removePlayer(name: string) {
+    this.players.delete(name);
+  }
+  clear() {
+    this.players.clear();
+  }
+  replaceWith(otherTable: Table) {
+    this.players = otherTable.players;
   }
 }
 

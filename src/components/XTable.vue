@@ -2,12 +2,9 @@
 import TableEditor from "./TableEditor.vue";
 import TableDisplay from "./TableDisplay.vue";
 import { Table } from "./Domain";
-import { ref } from "vue";
+import { reactive } from "vue";
 
-const table = ref(new Table());
-const preferences = ref({
-  gesamtwertung: [12, 10, 8, 6, 5, 4, 3, 2, 1],
-});
+const table = reactive(new Table());
 </script>
 
 <template>

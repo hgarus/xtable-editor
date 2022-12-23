@@ -33,10 +33,12 @@ function toClipboard(element: HTMLElement) {
 </script>
 
 <template>
-  <div>
-    <button @click="toClipboard($refs.table as HTMLTableElement)">
-      <font-awesome-icon icon="fa-regular fa-copy" />
-    </button>
+  <div class="viewer">
+    <header>
+      <button @click="toClipboard($refs.table as HTMLTableElement)">
+        <font-awesome-icon icon="fa-regular fa-copy" />
+      </button>
+    </header>
     <table ref="table">
       <tr>
         <th>Rang</th>
@@ -66,9 +68,15 @@ function toClipboard(element: HTMLElement) {
 </template>
 
 <style scoped>
-.editor {
-  height: 500px;
-  width: 500px;
+.viewer {
+  padding: 1em;
+  margin: 0 2em;
   border: 1px solid black;
+}
+header {
+  margin-bottom: 1em;
+}
+header button {
+  padding: 0.75em;
 }
 </style>
