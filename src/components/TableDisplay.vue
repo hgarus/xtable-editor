@@ -6,15 +6,11 @@ defineProps<{
   table: Table;
 }>();
 
-function gesamtwertung(rank: number) {
-  const gesamtwertung = [12, 10, 8, 6, 5, 4, 3, 2, 1];
-  return gesamtwertung[rank - 1] || _.last(gesamtwertung);
-  //props.gesamtwertung[rank - 1] || _.last(props.gesamtwertung);
-}
 const numberFormat = new Intl.NumberFormat("de");
 function formatNumber(num: number) {
   return numberFormat.format(num);
 }
+
 function toClipboard(element: HTMLElement) {
   function removeDataAttributes(element: Element) {
     for (const attr of element.attributes) {
@@ -54,14 +50,14 @@ function toClipboard(element: HTMLElement) {
         v-for="(player, index) in table.playersByRank()"
         v-bind:key="player.name"
       >
-        <td>{{ index + 1 }}.</td>
+        <td>{{ player.rank }}.</td>
         <td>{{ player.name }}</td>
         <td v-for="opp in table.playersByRank()" v-bind:key="opp.name">
           {{ opp !== player ? player.resultByOpp(opp) : "" }}
         </td>
         <td>{{ formatNumber(player.sonnebornBerger()) }}</td>
         <td>{{ formatNumber(player.points()) }}</td>
-        <td>{{ gesamtwertung(index + 1) }}</td>
+        <td>{{ formatNumber(player.pointsForStandings) }}</td>
       </tr>
     </table>
   </div>
@@ -78,5 +74,11 @@ header {
 }
 header button {
   padding: 0.75em;
+}
+
+tr:nth-child(n + 2) td:nth-last-of-type(1),
+tr:nth-child(n + 2) td:nth-last-of-type(2),
+tr:nth-child(n + 2) td:nth-last-of-type(3) {
+  text-align: right;
 }
 </style>

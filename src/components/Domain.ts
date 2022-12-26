@@ -1,7 +1,11 @@
 import * as _ from "lodash";
 
+const pointsForStandings = [12, 10, 8, 6, 5, 4, 3, 2, 1];
+
 export class Table {
-  players = new Map<string, Player>();
+  players: Player[] = [];
+  playersByName = new Map<string, Player>();
+
   static fromTableElement(tableElement: HTMLTableElement) {
     const table = new Table();
     const names = Array.from(
@@ -24,52 +28,98 @@ export class Table {
     });
     return table;
   }
+
   playerByName(name: string): Player | undefined {
-    return this.players.get(name);
+    return this.playersByName.get(name);
   }
+
   playersByRank(): Player[] {
-    const players = Array.from(this.players.values());
-    return _.orderBy(
-      players,
+    return this.players;
+  }
+
+  playersByEntry(): Player[] {
+    return Array.from(this.playersByName.values());
+  }
+
+  addPlayer(name: string) {
+    if (this.playersByName.has(name)) {
+      throw "Player already exists";
+    }
+    const newPlayer = new Player(
+      name,
+      this.onPlayerNameChange.bind(this),
+      this.updateRanks.bind(this)
+    );
+    this.playersByName.set(name, newPlayer);
+    this.players.push(newPlayer);
+    this.updateRanks();
+  }
+
+  onPlayerNameChange(oldName: string, newName: string, player: Player) {
+    this.playersByName.delete(oldName);
+    this.playersByName.set(newName, player);
+  }
+
+  updateRanks() {
+    const assignRank = (player: Player, i: number) => {
+      const predecessor = this.players[i - 1];
+      if (
+        predecessor?.points() === player.points() &&
+        predecessor?.sonnebornBerger() === player.sonnebornBerger()
+      ) {
+        player.rank = predecessor.rank;
+      } else {
+        player.rank = i + 1;
+      }
+    };
+    const assignPointsForStandings = () => {
+      const byRank: { [key: string]: Player[] } = _.groupBy(
+        this.players,
+        (player) => player.rank
+      );
+      _.forEach(byRank, (players, rank) => {
+        const points =
+          _.sum(
+            _.range(+rank, +rank + players.length).map(
+              (r) => pointsForStandings[r - 1] ?? _.last(pointsForStandings)
+            )
+          ) / players.length;
+        players.forEach((p) => (p.pointsForStandings = points));
+      });
+    };
+
+    this.players = _.orderBy(
+      this.players,
       [(p) => p.points(), (p) => p.sonnebornBerger()],
       ["desc", "desc"]
     );
+    this.players.forEach(assignRank);
+    assignPointsForStandings();
   }
-  playersByEntry(): Player[] {
-    return Array.from(this.players.values());
-  }
-  addPlayer(name: string) {
-    if (this.players.has(name)) {
-      throw "Player already exists";
-    }
-    this.players.set(
-      name,
-      new Player(name, this.onPlayerNameChange.bind(this))
-    );
-  }
-  onPlayerNameChange(oldName: string, newName: string, player: Player) {
-    this.players.delete(oldName);
-    this.players.set(newName, player);
-  }
-  removePlayer(name: string) {
-    this.players.delete(name);
-  }
+
   clear() {
-    this.players.clear();
+    this.players = [];
+    this.playersByName.clear();
   }
+
   replaceWith(otherTable: Table) {
+    this.playersByName = otherTable.playersByName;
     this.players = otherTable.players;
+    this.updateRanks();
   }
 }
 
 export class Player {
-  private _name: string;
-  private readonly resultsByOpponent = new Map<Player, Result>();
-  private readonly onNameChange: (
+  _name: string;
+  rank = 0;
+  pointsForStandings = 0;
+  readonly resultsByOpponent = new Map<Player, Result>();
+  readonly onNameChange: (
     oldName: string,
     newName: string,
     player: Player
   ) => void;
+  readonly updateRanks: () => void;
 
   get name() {
     return this._name;
@@ -81,10 +131,12 @@ export class Player {
   }
   constructor(
     name: string,
-    onNameChange: (oldName: string, newName: string, player: Player) => void
+    onNameChange: (oldName: string, newName: string, player: Player) => void,
+    updateRanks: () => void
   ) {
     this._name = name;
     this.onNameChange = onNameChange;
+    this.updateRanks = updateRanks;
   }
 
   points() {
@@ -110,7 +162,9 @@ export class Player {
   setResult(opp: Player, result: Result) {
     this.resultsByOpponent.set(opp, result);
     opp.resultsByOpponent.set(this, invert(result));
+    this.updateRanks();
   }
+
   resultByOpp(opponent: Player): Result {
     return this.resultsByOpponent.get(opponent) || Result.Missing;
   }
