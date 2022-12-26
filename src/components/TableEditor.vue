@@ -83,8 +83,8 @@ function importTable(table: Table) {
 <style scoped>
 .editor {
   border: 1px solid black;
-  padding: 1em;
-  margin: 0 2em;
+  padding: 1rem;
+  margin: 1rem;
 }
 input[type="text"] {
   width: 150px;
@@ -93,9 +93,9 @@ input[type="text"] {
   text-align: right;
 }
 header {
-  margin-bottom: 1em;
+  margin-bottom: 1rem;
 }
 header button {
-  padding: 0.75em;
+  padding: 0.75rem;
 }
 </style>

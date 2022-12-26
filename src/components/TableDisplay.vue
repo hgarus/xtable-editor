@@ -69,12 +69,12 @@ function toClipboard(element: HTMLElement) {
 
 <style scoped>
 .viewer {
-  padding: 1em;
-  margin: 0 2em;
+  padding: 1rem;
+  margin: 1rem;
   border: 1px solid black;
 }
 header {
-  margin-bottom: 1em;
+  margin-bottom: 1rem;
 }
 header button {
   padding: 0.75em;

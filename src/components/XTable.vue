@@ -17,5 +17,7 @@ const table = reactive(new Table());
 <style scoped>
 .x-table {
   display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
 }
 </style>
