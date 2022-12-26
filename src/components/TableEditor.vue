@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, reactive } from "vue";
 import * as _ from "lodash";
 import { Table } from "./Domain";
 import ResultInput from "./ResultInput.vue";
@@ -10,6 +10,7 @@ const props = defineProps<{
 }>();
 const importDialog = ref<InstanceType<typeof ImportDialog>>();
 const tableElement = ref<HTMLTableElement | null>();
+const highlighted: { col: number | null } = reactive({ col: null });
 function newPlayer(event: Event) {
   const target = event.target as HTMLInputElement;
   props.table.addPlayer(target.value);
@@ -42,20 +43,28 @@ function importTable(table: Table) {
       <tr>
         <th>#</th>
         <th>Name</th>
-        <th v-for="(_, index) in table.playersByEntry()" v-bind:key="index">
+        <th
+          v-for="(_, index) in table.playersByEntry()"
+          v-bind:key="index"
+          :class="{ highlighted: highlighted.col === index }"
+        >
           {{ index + 1 }}
         </th>
         <th>Punkte</th>
       </tr>
       <tr
+        :class="{ highlighted: highlighted.col === index }"
         v-for="(player, index) in table.playersByEntry()"
         v-bind:key="player.name"
       >
         <td>{{ index + 1 }}</td>
         <td><input type="text" v-model.lazy="player.name" /></td>
         <td
+          @mouseenter="highlighted.col = oppIndex"
+          @mouseleave="highlighted.col = null"
           v-for="(opp, oppIndex) in table.playersByEntry()"
           v-bind:key="opp.name"
+          :class="{ highlighted: highlighted.col === oppIndex }"
         >
           <ResultInput
             v-if="index !== oppIndex"
@@ -96,6 +105,10 @@ header {
   margin-bottom: 1rem;
 }
 header button {
+  margin-right: 1rem;
   padding: 0.75rem;
+}
+.highlighted {
+  background-color: rgba(255, 0, 0, 0.5);
 }
 </style>
