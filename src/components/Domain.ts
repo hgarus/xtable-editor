@@ -105,6 +105,7 @@ export class Table {
   replaceWith(otherTable: Table) {
     this.playersByName = otherTable.playersByName;
     this.players = otherTable.players;
+    this.players.forEach(p => p.updateRanks = this.updateRanks.bind(this))
     this.updateRanks();
   }
 }
@@ -119,7 +120,7 @@ export class Player {
     newName: string,
     player: Player
   ) => void;
-  readonly updateRanks: () => void;
+  updateRanks: () => void;
 
   get name() {
     return this._name;
