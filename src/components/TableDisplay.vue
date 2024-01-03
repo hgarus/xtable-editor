@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import * as _ from "lodash";
 import { Table } from "./Domain";
+import { ref } from "vue";
 
 defineProps<{
   table: Table;
@@ -24,8 +25,11 @@ function toClipboard(element: HTMLElement) {
   for (const n of node.querySelectorAll("*")) {
     removeDataAttributes(n);
   }
-  window.navigator.clipboard.writeText(node.outerHTML);
+  window.navigator.clipboard.writeText(node.outerHTML.replace(/<\!--.*?-->/g, ''));
 }
+const displayDetailedResults = ref(true);
+const displayNumberOfGames = ref(false);
+const factor = ref(1);
 </script>
 
 <template>
@@ -34,17 +38,26 @@ function toClipboard(element: HTMLElement) {
       <button @click="toClipboard($refs.table as HTMLTableElement)">
         <font-awesome-icon icon="fa-regular fa-copy" />
       </button>
+
+      <label>
+        Details: 
+        <input type="checkbox" v-model="displayDetailedResults">
+      </label>
+      <label>
+        Factor:
+        <input type="number" min="1" v-model="factor">
+      </label>
     </header>
     <table ref="table">
       <tr>
         <th>Rang</th>
         <th>Name</th>
-        <th v-for="(_, index) in table.playersByRank()" v-bind:key="index">
+        <th v-if="displayDetailedResults" v-for="(_, index) in table.playersByRank()" v-bind:key="index">
           {{ index + 1 }}
         </th>
         <th>SB</th>
         <th>Summe</th>
-        <th>Punkte Gesamtwertung</th>
+        <th v-if="displayDetailedResults">Punkte Gesamtwertung</th>
       </tr>
       <tr
         v-for="(player, index) in table.playersByRank()"
@@ -52,12 +65,12 @@ function toClipboard(element: HTMLElement) {
       >
         <td>{{ player.rank }}.</td>
         <td>{{ player.name }}</td>
-        <td v-for="opp in table.playersByRank()" v-bind:key="opp.name">
+        <td v-if="displayDetailedResults" v-for="opp in table.playersByRank()" v-bind:key="opp.name">
           {{ opp !== player ? player.resultByOpp(opp) : "" }}
         </td>
         <td>{{ formatNumber(player.sonnebornBerger()) }}</td>
         <td>{{ formatNumber(player.points()) }}</td>
-        <td>{{ formatNumber(player.pointsForStandings) }}</td>
+        <td v-if="displayDetailedResults">{{ formatNumber(player.pointsForStandings * (factor || 1)) }}</td>
       </tr>
     </table>
   </div>
@@ -76,9 +89,22 @@ header button {
   padding: 0.75em;
 }
 
+header > * {
+  margin: 0 0.5em;
+}
+
 tr:nth-child(n + 2) td:nth-last-of-type(1),
 tr:nth-child(n + 2) td:nth-last-of-type(2),
 tr:nth-child(n + 2) td:nth-last-of-type(3) {
   text-align: right;
+}
+
+header input[type=checkbox] {
+  width: 1.5em;
+  height: 1.5em;
+  vertical-align: middle;
+}
+input[type=number] {
+  width: 3em;
 }
 </style>
