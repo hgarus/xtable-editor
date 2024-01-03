@@ -52,6 +52,7 @@ const factor = ref(1);
       <tr>
         <th>Rang</th>
         <th>Name</th>
+        <th v-if="!displayDetailedResults">Spiele</th>
         <th v-if="displayDetailedResults" v-for="(_, index) in table.playersByRank()" v-bind:key="index">
           {{ index + 1 }}
         </th>
@@ -65,11 +66,13 @@ const factor = ref(1);
       >
         <td>{{ player.rank }}.</td>
         <td>{{ player.name }}</td>
+        <td v-if="!displayDetailedResults">{{ formatNumber(player.numberOfGames())  }}</td>
         <td v-if="displayDetailedResults" v-for="opp in table.playersByRank()" v-bind:key="opp.name">
           {{ opp !== player ? player.resultByOpp(opp) : "" }}
         </td>
         <td>{{ formatNumber(player.sonnebornBerger()) }}</td>
         <td>{{ formatNumber(player.points()) }}</td>
+        
         <td v-if="displayDetailedResults">{{ formatNumber(player.pointsForStandings * (factor || 1)) }}</td>
       </tr>
     </table>

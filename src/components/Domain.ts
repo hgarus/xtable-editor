@@ -144,6 +144,10 @@ export class Player {
     return _.sumBy(Array.from(this.resultsByOpponent.values()), resultToPoints);
   }
 
+  numberOfGames() {
+    return _.sumBy(Array.from(this.resultsByOpponent.values(), r => r ? 1 : 0))
+  }
+
   sonnebornBerger() {
     return _.sum(
       Array.from(this.resultsByOpponent.entries()).map(([opp, result]) => {
