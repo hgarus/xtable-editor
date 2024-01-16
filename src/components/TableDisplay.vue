@@ -49,32 +49,37 @@ const factor = ref(1);
       </label>
     </header>
     <table ref="table">
-      <tr>
-        <th>Rang</th>
-        <th>Name</th>
-        <th v-if="!displayDetailedResults">Spiele</th>
-        <th v-if="displayDetailedResults" v-for="(_, index) in table.playersByRank()" v-bind:key="index">
-          {{ index + 1 }}
-        </th>
-        <th>SB</th>
-        <th>Summe</th>
-        <th v-if="displayDetailedResults">Punkte Gesamtwertung</th>
-      </tr>
-      <tr
-        v-for="(player, index) in table.playersByRank()"
-        v-bind:key="player.name"
-      >
-        <td>{{ player.rank }}.</td>
-        <td>{{ player.name }}</td>
-        <td v-if="!displayDetailedResults">{{ formatNumber(player.numberOfGames())  }}</td>
-        <td v-if="displayDetailedResults" v-for="opp in table.playersByRank()" v-bind:key="opp.name">
-          {{ opp !== player ? player.resultByOpp(opp) : "" }}
-        </td>
-        <td>{{ formatNumber(player.sonnebornBerger()) }}</td>
-        <td>{{ formatNumber(player.points()) }}</td>
-        
-        <td v-if="displayDetailedResults">{{ formatNumber(player.pointsForStandings * (factor || 1)) }}</td>
-      </tr>
+      <thead>
+        <tr>
+          <th>Rang</th>
+          <th>Name</th>
+          <th v-if="!displayDetailedResults">Spiele</th>
+          <th v-if="displayDetailedResults" v-for="(_, index) in table.playersByRank()" v-bind:key="index">
+            {{ index + 1 }}
+          </th>
+          <th>SB</th>
+          <th v-if="displayDetailedResults">Summe</th>
+          <th v-else>Punkte</th>
+          <th v-if="displayDetailedResults">Punkte Gesamtwertung</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr
+          v-for="(player, index) in table.playersByRank()"
+          v-bind:key="player.name"
+        >
+          <td>{{ player.rank }}.</td>
+          <td>{{ player.name }}</td>
+          <td v-if="!displayDetailedResults">{{ formatNumber(player.numberOfGames())  }}</td>
+          <td v-if="displayDetailedResults" v-for="opp in table.playersByRank()" v-bind:key="opp.name">
+            {{ opp !== player ? player.resultByOpp(opp) : "" }}
+          </td>
+          <td>{{ formatNumber(player.sonnebornBerger()) }}</td>
+          <td>{{ formatNumber(player.points()) }}</td>
+          
+          <td v-if="displayDetailedResults">{{ formatNumber(player.pointsForStandings * (factor || 1)) }}</td>
+        </tr>
+      </tbody>
     </table>
   </div>
 </template>
@@ -96,9 +101,9 @@ header > * {
   margin: 0 0.5em;
 }
 
-tr:nth-child(n + 2) td:nth-last-of-type(1),
-tr:nth-child(n + 2) td:nth-last-of-type(2),
-tr:nth-child(n + 2) td:nth-last-of-type(3) {
+tbody tr td:nth-last-of-type(1),
+tbody tr td:nth-last-of-type(2),
+tbody tr td:nth-last-of-type(3) {
   text-align: right;
 }
 

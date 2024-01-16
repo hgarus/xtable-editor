@@ -40,51 +40,55 @@ function importTable(table: Table) {
       </button>
     </header>
     <table ref="tableElement">
-      <tr>
-        <th>#</th>
-        <th>Name</th>
-        <th
-          v-for="(_, index) in table.playersByEntry()"
-          v-bind:key="index"
-          :class="{ highlighted: highlighted.col === index }"
-        >
-          {{ index + 1 }}
-        </th>
-        <th>Punkte</th>
-      </tr>
-      <tr
-        :class="{ highlighted: highlighted.col === index }"
-        v-for="(player, index) in table.playersByEntry()"
-        v-bind:key="player.name"
-      >
-        <td>{{ index + 1 }}</td>
-        <td><input type="text" v-model.lazy="player.name" /></td>
-        <td
-          @mouseenter="highlighted.col = oppIndex"
-          @mouseleave="highlighted.col = null"
-          v-for="(opp, oppIndex) in table.playersByEntry()"
-          v-bind:key="opp.name"
-          :class="{ highlighted: highlighted.col === oppIndex }"
-        >
-          <ResultInput
-            v-if="index !== oppIndex"
-            :tabindex="
-              index < oppIndex
-                ? index * table.playersByEntry().length + oppIndex
-                : undefined
-            "
-            :model-value="player.resultByOpp(opp)"
-            @update:model-value="(newValue) => player.setResult(opp, newValue)"
-            @focusOn="(tabindex) => focusByTabindex(tabindex)"
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Name</th>
+          <th
+            v-for="(_, index) in table.playersByEntry()"
+            v-bind:key="index"
+            :class="{ highlighted: highlighted.col === index }"
           >
-          </ResultInput>
-        </td>
-        <td class="align-right">{{ player.points() }}</td>
-      </tr>
-      <tr>
-        <td></td>
-        <td><input type="text" @keypress.enter="newPlayer" /></td>
-      </tr>
+            {{ index + 1 }}
+          </th>
+          <th>Punkte</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr
+          :class="{ highlighted: highlighted.col === index }"
+          v-for="(player, index) in table.playersByEntry()"
+          v-bind:key="player.name"
+        >
+          <td>{{ index + 1 }}</td>
+          <td><input type="text" v-model.lazy="player.name" /></td>
+          <td
+            @mouseenter="highlighted.col = oppIndex"
+            @mouseleave="highlighted.col = null"
+            v-for="(opp, oppIndex) in table.playersByEntry()"
+            v-bind:key="opp.name"
+            :class="{ highlighted: highlighted.col === oppIndex }"
+          >
+            <ResultInput
+              v-if="index !== oppIndex"
+              :tabindex="
+                index < oppIndex
+                  ? index * table.playersByEntry().length + oppIndex
+                  : undefined
+              "
+              :model-value="player.resultByOpp(opp)"
+              @update:model-value="(newValue) => player.setResult(opp, newValue)"
+              @focusOn="(tabindex) => focusByTabindex(tabindex)"
+            >
+            </ResultInput>
+          </td>
+          <td class="align-right">{{ player.points() }}</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td><input type="text" @keypress.enter="newPlayer" /></td>
+        </tr>
+      </tbody>
     </table>
   </div>
 </template>

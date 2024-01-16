@@ -31,10 +31,10 @@ table th {
 table td {
   padding: 0.25em 0.25em;
 }
-table tr:first-child {
+thead tr:first-child {
   background-color: darkgray;
 }
-table tr:nth-child(2n + 2) {
+tbody tr:nth-child(2n + 2) {
   background-color: lightgray;
 }
 dialog {
